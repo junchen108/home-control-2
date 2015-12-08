@@ -13,7 +13,7 @@
 			<key>value</key>
 			<string></string>
 			<key>primaryTitle</key>
-			<string></string>
+			<string>Manual</string>
 			<key>secondaryTitle</key>
 			<string>Control Mode</string>
 			<key>cellIdentifier</key>
@@ -71,7 +71,7 @@
 			<key>primaryTitle</key>
 			<string></string>
 			<key>secondaryTitle</key>
-			<string>Alarm Status</string>
+			<string>Alarm</string>
 			<key>cellIdentifier</key>
 			<string>idCellNormal</string>
 			<key>additionalRows</key>
@@ -125,7 +125,7 @@
 			<key>primaryTitle</key>
 			<string></string>
 			<key>secondaryTitle</key>
-			<string>Lamp Status</string>
+			<string>Lamp</string>
 			<key>cellIdentifier</key>
 			<string>idCellNormal</string>
 			<key>additionalRows</key>

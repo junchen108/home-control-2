@@ -20,8 +20,10 @@
 		856863441C14C63D00CB8DC9 /* SwitchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8568633D1C14C63D00CB8DC9 /* SwitchCell.xib */; };
 		856863451C14C63D00CB8DC9 /* TextfieldCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8568633E1C14C63D00CB8DC9 /* TextfieldCell.xib */; };
 		856863461C14C63D00CB8DC9 /* ValuePickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8568633F1C14C63D00CB8DC9 /* ValuePickerCell.xib */; };
-		856863481C14C66B00CB8DC9 /* CellDescriptor.plist in Resources */ = {isa = PBXBuildFile; fileRef = 856863471C14C66B00CB8DC9 /* CellDescriptor.plist */; };
+		856863481C14C66B00CB8DC9 /* CellDescriptorManual.plist in Resources */ = {isa = PBXBuildFile; fileRef = 856863471C14C66B00CB8DC9 /* CellDescriptorManual.plist */; };
 		8568634A1C14C68E00CB8DC9 /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856863491C14C68E00CB8DC9 /* CustomCell.swift */; };
+		859D05331C160A2D0088E712 /* CellDescriptorAuto.plist in Resources */ = {isa = PBXBuildFile; fileRef = 859D05321C160A2D0088E712 /* CellDescriptorAuto.plist */; };
+		85D4FDA21C172B1700CB1654 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85D4FDA11C172B1700CB1654 /* SwiftyJSON.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,8 +42,10 @@
 		8568633D1C14C63D00CB8DC9 /* SwitchCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SwitchCell.xib; path = HomeControl2/SwitchCell.xib; sourceTree = "<group>"; };
 		8568633E1C14C63D00CB8DC9 /* TextfieldCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TextfieldCell.xib; path = HomeControl2/TextfieldCell.xib; sourceTree = "<group>"; };
 		8568633F1C14C63D00CB8DC9 /* ValuePickerCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ValuePickerCell.xib; path = HomeControl2/ValuePickerCell.xib; sourceTree = "<group>"; };
-		856863471C14C66B00CB8DC9 /* CellDescriptor.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = CellDescriptor.plist; path = HomeControl2/CellDescriptor.plist; sourceTree = "<group>"; };
+		856863471C14C66B00CB8DC9 /* CellDescriptorManual.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = CellDescriptorManual.plist; path = HomeControl2/CellDescriptorManual.plist; sourceTree = "<group>"; };
 		856863491C14C68E00CB8DC9 /* CustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomCell.swift; path = HomeControl2/CustomCell.swift; sourceTree = "<group>"; };
+		859D05321C160A2D0088E712 /* CellDescriptorAuto.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = CellDescriptorAuto.plist; path = HomeControl2/CellDescriptorAuto.plist; sourceTree = "<group>"; };
+		85D4FDA11C172B1700CB1654 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85D4FDA21C172B1700CB1654 /* SwiftyJSON.framework in Frameworks */,
 				85237B551C11F97500242D88 /* Just.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -59,7 +64,8 @@
 		85237B581C11FFCC00242D88 /* Custom Cells */ = {
 			isa = PBXGroup;
 			children = (
-				856863471C14C66B00CB8DC9 /* CellDescriptor.plist */,
+				856863471C14C66B00CB8DC9 /* CellDescriptorManual.plist */,
+				859D05321C160A2D0088E712 /* CellDescriptorAuto.plist */,
 				856863491C14C68E00CB8DC9 /* CustomCell.swift */,
 				8568633A1C14C63D00CB8DC9 /* DatePickerCell.xib */,
 				8568633B1C14C63D00CB8DC9 /* NormalCell.xib */,
@@ -75,6 +81,7 @@
 		85451FBE1C11CF2300DB182B = {
 			isa = PBXGroup;
 			children = (
+				85D4FDA11C172B1700CB1654 /* SwiftyJSON.framework */,
 				85451FDE1C11D24500DB182B /* Just.framework */,
 				85451FC91C11CF2300DB182B /* HomeControl2 */,
 				85451FC81C11CF2300DB182B /* Products */,
@@ -173,10 +180,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				856863421C14C63D00CB8DC9 /* NormalCell.xib in Resources */,
-				856863481C14C66B00CB8DC9 /* CellDescriptor.plist in Resources */,
+				856863481C14C66B00CB8DC9 /* CellDescriptorManual.plist in Resources */,
 				856863451C14C63D00CB8DC9 /* TextfieldCell.xib in Resources */,
 				85451FD71C11CF2300DB182B /* LaunchScreen.storyboard in Resources */,
 				856863431C14C63D00CB8DC9 /* SliderCell.xib in Resources */,
+				859D05331C160A2D0088E712 /* CellDescriptorAuto.plist in Resources */,
 				856863441C14C63D00CB8DC9 /* SwitchCell.xib in Resources */,
 				856863411C14C63D00CB8DC9 /* DatePickerCell.xib in Resources */,
 				85451FD41C11CF2300DB182B /* Assets.xcassets in Resources */,
@@ -195,6 +203,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/Just.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
 			);
 			outputPaths = (
 			);

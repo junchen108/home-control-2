@@ -7,9 +7,14 @@
 //
 
 import UIKit
+import Foundation
+import Just
+import SwiftyJSON
 
 class ControlPanelViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    let server = "http://192.168.43.116:3000/"
+    var timer = NSTimer()
     var cellDescriptors: NSMutableArray!
     var visibleRowsPerSection = [[Int]]()
     
@@ -17,15 +22,13 @@ class ControlPanelViewController: UIViewController, UITableViewDelegate, UITable
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
         configureTableView()
-        loadCellDescriptors()
+        loadCellDescriptors("CellDescriptorManual")
     }
 
     override func didReceiveMemoryWarning() {
@@ -33,8 +36,8 @@ class ControlPanelViewController: UIViewController, UITableViewDelegate, UITable
         // Dispose of any resources that can be recreated.
     }
     
-    func loadCellDescriptors() {
-        if let path = NSBundle.mainBundle().pathForResource("CellDescriptor", ofType: "plist") {
+    func loadCellDescriptors(fileName: String) {
+        if let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "plist") {
             cellDescriptors = NSMutableArray(contentsOfFile: path)
             getIndicesOfVisibleRows()
             tblExpandable.reloadData()
@@ -91,9 +94,9 @@ class ControlPanelViewController: UIViewController, UITableViewDelegate, UITable
     func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
             case 0:
-                return "Mode"
+                return "Basic"
             default:
-                return "Devices"
+                return "Device Status"
         }
     }
     
@@ -101,12 +104,12 @@ class ControlPanelViewController: UIViewController, UITableViewDelegate, UITable
         let currentCellDescriptor = getCellDescriptorForIndexPath(indexPath)
         
         switch currentCellDescriptor["cellIdentifier"] as! String {
-            case "idCellNormal":
-                return 60.0
-            case "idCellDatePicker":
-                return 270.0
-            default:
-                return 44.0
+        case "idCellNormal":
+            return 60.0
+        case "idCellDatePicker":
+            return 270.0
+        default:
+            return 44.0
         }
     }
     
@@ -144,6 +147,8 @@ class ControlPanelViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        var isModeChangedToAutomatic = false
+        var isModeChangedToManual = false
         let indexOfTappedRow = visibleRowsPerSection[indexPath.section][indexPath.row]
         
         if cellDescriptors[indexPath.section][indexOfTappedRow]["isExpandable"] as! Bool == true {
@@ -168,18 +173,101 @@ class ControlPanelViewController: UIViewController, UITableViewDelegate, UITable
                     }
                 }
                 
-                cellDescriptors[indexPath.section][indexOfParentCell].setValue((tblExpandable.cellForRowAtIndexPath(indexPath) as! CustomCell).textLabel?.text, forKey: "primaryTitle")
+                let parentCell = cellDescriptors[indexPath.section][indexOfParentCell]
+                let parentSecondaryTitle = parentCell["secondaryTitle"] as! String
+                let pickedValue = ((tblExpandable.cellForRowAtIndexPath(indexPath) as! CustomCell).textLabel?.text)!
                 
-                cellDescriptors[indexPath.section][indexOfParentCell].setValue(false, forKey: "isExpanded")
+                if parentSecondaryTitle == "Control Mode" && pickedValue == "Auto" {
+                    isModeChangedToAutomatic = true
+                }
                 
-                for i in (indexOfParentCell + 1)...(indexOfParentCell + (cellDescriptors[indexPath.section][indexOfParentCell]["additionalRows"] as! Int)) {
+                if parentSecondaryTitle == "Control Mode" && pickedValue == "Manual" {
+                    isModeChangedToManual = true
+                }
+                
+                parentCell.setValue(pickedValue, forKey: "primaryTitle")
+                parentCell.setValue(false, forKey: "isExpanded")
+                
+                for i in (indexOfParentCell + 1)...(indexOfParentCell + (parentCell["additionalRows"] as! Int)) {
                     cellDescriptors[indexPath.section][i].setValue(false, forKey: "isVisible")
                 }
+                
+                sendCommand(getCommand(parentSecondaryTitle, withParameter: pickedValue))
             }
         }
         
         getIndicesOfVisibleRows()
         tblExpandable.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: UITableViewRowAnimation.Fade)
+        
+        if isModeChangedToAutomatic {
+            loadCellDescriptors("CellDescriptorAuto")
+            timer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: "updateDevicesStatus", userInfo: nil, repeats: true)
+        }
+        
+        if isModeChangedToManual {
+            loadCellDescriptors("CellDescriptorManual")
+            timer.invalidate()
+        }
+    }
+    
+    func getCommand(keyword: String, withParameter parameter: String) -> String {
+        var cmd: String
+        
+        switch (keyword, parameter) {
+        case ("Control Mode", "Auto"):
+            cmd = server + "setAutomatic/1"
+        case ("Control Mode", "Manual"):
+            cmd = server + "setAutomatic/0"
+        case ("Alarm", "On"):
+            cmd = server + "setAlarm/1"
+        case ("Alarm", "Off"):
+            cmd = server + "setAlarm/0"
+        case ("Lamp", "On"):
+            cmd = server + "setRelay/1"
+        case ("Lamp", "Off"):
+            cmd = server + "setRelay/0"
+        default:
+            cmd = server
+        }
+        
+        return cmd
+    }
+        
+    
+    func sendCommand(url: String) {
+        Just.get(url)
+    }
+    
+    func fetchDevicesStatus() -> (String?, String?) {
+        let alarmStatus = JSON(Just.get(server + "getAlarm").json!)["data"][0].string
+        let relayStatus = JSON(Just.get(server + "getRelay").json!)["data"][0].string
+        return (alarmStatus, relayStatus)
+    }
+    
+    func updateDevicesStatus() {
+        let status = fetchDevicesStatus()
+        
+        func updateUI(alarmStatusString alarmStatus: String, relayStatusString relayStatus: String) {
+            cellDescriptors[1][0].setValue(alarmStatus, forKey: "primaryTitle")
+            cellDescriptors[1][1].setValue(relayStatus, forKey: "primaryTitle")
+            getIndicesOfVisibleRows()
+            tblExpandable.reloadSections(NSIndexSet(index: 1), withRowAnimation: UITableViewRowAnimation.Fade)
+        }
+        
+        if let alarmStatus = status.0, relayStatus = status.1 {
+            switch (alarmStatus, relayStatus) {
+            case ("0","0"):
+                updateUI(alarmStatusString: "Off", relayStatusString: "Off")
+            case ("0","1"):
+                updateUI(alarmStatusString: "Off", relayStatusString: "On")
+            case ("1","0"):
+                updateUI(alarmStatusString: "On", relayStatusString: "Off")
+            case ("1","1"):
+                updateUI(alarmStatusString: "On", relayStatusString: "On")
+            default:
+                updateUI(alarmStatusString: "unknown", relayStatusString: "unknown")
+            }
+        }
     }
 
 }
